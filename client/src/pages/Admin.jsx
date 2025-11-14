@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Trash, Edit } from "lucide-react"; // Using icons for a cleaner look
+import { Trash, Edit, Search } from "lucide-react"; // 1. Import Search icon
 
 export default function Admin() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState(""); // 2. Add state for the search term
 
   // Fetch all items when the component mounts
   useEffect(() => {
@@ -31,35 +32,34 @@ export default function Admin() {
     };
 
     fetchItems();
-  }, []); // Empty dependency array means this runs once on mount
+  }, []);
 
   // Handle the delete item functionality
   const handleDeleteItem = async (itemId) => {
-    // Show a confirmation dialog before deleting
     if (!window.confirm('Are you sure you want to delete this item?')) {
       return;
     }
-
+    // ... (rest of your delete logic) ...
     try {
       setError(null);
       const res = await fetch(`/api/item/delete/${itemId}`, {
         method: 'DELETE',
       });
-
       const data = await res.json();
-
       if (!res.ok) {
         setError(data.message || 'Failed to delete item');
         return;
       }
-
-      // If delete is successful, update the state to remove the item
       setItems((prevItems) => prevItems.filter((item) => item._id !== itemId));
-
     } catch (err) {
       setError(err.message);
     }
   };
+
+  // 3. Create a filtered list based on the search term
+  const filteredItems = items.filter((item) =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <main className="p-4 sm:p-8 max-w-6xl mx-auto">
@@ -68,7 +68,7 @@ export default function Admin() {
           Admin Dashboard
         </h1>
         <Link
-          to="/admin/24863971/create-item"
+          to="/create-item"
           className="p-3 bg-indigo-600 text-white rounded-lg uppercase font-semibold shadow-md hover:bg-indigo-700 transition-all duration-300"
         >
           Create New Item
@@ -76,6 +76,18 @@ export default function Admin() {
       </div>
 
       <h2 className="text-2xl font-semibold text-gray-700 mb-4">Manage Items</h2>
+
+      {/* --- 4. Add the Search Input Bar --- */}
+      <div className="mb-4 relative">
+        <input
+          type="text"
+          placeholder="Search items by name..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full p-3 pl-10 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition duration-300"
+        />
+        <Search className="h-5 w-5 text-gray-400 absolute top-3.5 left-3" />
+      </div>
 
       {/* --- Loading State --- */}
       {loading && (
@@ -88,13 +100,16 @@ export default function Admin() {
       )}
 
       {/* --- Item List --- */}
-      {!loading && !error && items.length === 0 && (
-        <p className="text-center text-gray-500">No items found in the database.</p>
+      {!loading && !error && filteredItems.length === 0 && (
+        <p className="text-center text-gray-500">
+          {items.length === 0 ? "No items found in the database." : "No items match your search."}
+        </p>
       )}
 
-      {!loading && items.length > 0 && (
+      {!loading && filteredItems.length > 0 && (
         <div className="overflow-x-auto bg-white rounded-xl shadow-xl">
           <table className="min-w-full divide-y divide-gray-200">
+            {/* ... (table head <thead> is unchanged) ... */}
             <thead className="bg-gray-50">
               <tr>
                 <th
@@ -124,7 +139,8 @@ export default function Admin() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {items.map((item) => (
+              {/* 5. Map over filteredItems instead of items */}
+              {filteredItems.map((item) => (
                 <tr key={item._id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <img
@@ -145,7 +161,7 @@ export default function Admin() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <Link
-                      to={`/update-item/${item._id}`} // Placeholder for update page
+                      to={`/update-item/${item._id}`}
                       className="text-indigo-600 hover:text-indigo-900 inline-block mr-4"
                       title="Update"
                     >
