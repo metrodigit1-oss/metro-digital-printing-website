@@ -29,28 +29,28 @@ export default function Home() {
   // Data for the new "Why Choose Us?" section, matching the image content
   const features = [
     { 
-      // Icon: Red printer stack (Replaced with IoPrint)
+      
       title: 'PrintSmart', 
       subtitle: 'Hassle Free Printing',
-      IconComponent: IoPrint // Added the imported React Icon component
+      IconComponent: IoPrint 
     },
     { 
-      // Icon: 24hr clock with red marker (Replaced with IoTimeOutline)
+      
       title: 'Fast Turnaround', 
       subtitle: '24 hr Delivery Option',
-      IconComponent: IoTimeOutline // Added the imported React Icon component
+      IconComponent: IoTimeOutline 
     },
     { 
-      // Icon: Shield/badge with checkmark (Replaced with IoShieldCheckmarkOutline)
+      
       title: 'Best Prices', 
       subtitle: 'Offering Great Deals',
-      IconComponent: IoShieldCheckmarkOutline // Added the imported React Icon component
+      IconComponent: IoShieldCheckmarkOutline 
     },
     { 
-      // Icon: Stacked squares/boxes (Replaced with IoGridOutline)
+      
       title: 'Wide Range', 
       subtitle: 'Products for All Needs',
-      IconComponent: IoGridOutline // Added the imported React Icon component
+      IconComponent: IoGridOutline 
     }
   ]
 
@@ -78,7 +78,7 @@ const categories = [
       >
         {slides.map((slide, index) => (
           <SwiperSlide key={index}>
-            {/* ... Swiper Slide Content (Unchanged) ... */}
+            {/* ... Swiper Slide Content*/}
             <div className="w-full h-100 flex">
               {/* Left side - Text with background */}
               <div className="w-1/2 bg-linear-to-r from-blue-300 to-blue-500 text-white flex flex-col justify-center items-start p-8 lg:p-16">
