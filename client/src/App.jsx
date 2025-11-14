@@ -13,6 +13,7 @@ import Posters from './assets/Posters.png'
 import Calender from './assets/Calender.png'
 import Brochures from './assets/Brochures.png'
 import Admin from "./pages/Admin.jsx"
+import UpdateItem from "./pages/UpdateItem.jsx"
 
 
 
@@ -37,6 +38,7 @@ export default function App() {
     <Route path="/about" element={<About />} />
     <Route path="/admin/24863971" element={<Admin />} />
     <Route path="/admin/24863971/create-item" element={<CreateItem />} />
+    <Route path="/admin/24863971/update-item/:id" element={<UpdateItem />} />
   </Routes>
   <Footer productCategories={categoriesData} />
   </BrowserRouter>

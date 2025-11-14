@@ -161,7 +161,7 @@ export default function Admin() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <Link
-                      to={`/update-item/${item._id}`}
+                      to={`/admin/24863971/update-item/${item._id}`}
                       className="text-indigo-600 hover:text-indigo-900 inline-block mr-4"
                       title="Update"
                     >

@@ -36,3 +36,36 @@ export const deleteItem = async (req, res) => {
         res.status(500).json({ message: 'Delete item Error', error: error.message });
     }
 }
+
+// --- Get a single item ---
+export const getItem = async (req, res) => {
+    try {
+        const item = await Item.findById(req.params.id);
+        if (!item) {
+            return res.status(404).json({ message: 'Item not found!' });
+        }
+        res.status(200).json(item);
+    } catch (error) {
+        res.status(500).json({ message: 'Get item Error', error: error.message });
+    }
+}
+
+// --- Update an item ---
+export const updateItem = async (req, res) => {
+    try {
+        const item = await Item.findById(req.params.id);
+        if (!item) {
+            return res.status(404).json({ message: 'Item not found!' });
+        }
+
+        const updatedItem = await Item.findByIdAndUpdate(
+            req.params.id,
+            { $set: req.body }, // Use $set to update only the fields provided
+            { new: true } // Return the updated document
+        );
+
+        res.status(200).json({ message: 'Item updated successfully', item: updatedItem });
+    } catch (error) {
+        res.status(500).json({ message: 'Update item Error', error: error.message });
+    }
+}
