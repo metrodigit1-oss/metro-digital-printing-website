@@ -13,8 +13,37 @@ export const createItem = async (req, res) => {
 // --- Get all items ---
 export const getItems = async (req, res) => {
     try {
-        const items = await Item.find({});
+        const searchTerm = req.query.searchTerm || '';
+        const category = req.query.category;
+        const sort = req.query.sort || 'createdAt';
+        const order = req.query.order === 'asc' ? 1 : -1;
+
+        let filter = {};
+
+        // Add search term to filter
+        // This searches the 'name' and 'description' fields.
+        // '$options: "i"' makes the search case-insensitive.
+        if (searchTerm) {
+            filter.$or = [
+                { name: { $regex: searchTerm, $options: 'i' } },
+                { description: { $regex: searchTerm, $options: 'i' } }
+            ];
+        }
+
+        // Add category to filter
+        if (category && category !== 'all') {
+            filter.category = category;
+        }
+
+        // Add sorting
+        const sortOptions = {};
+        sortOptions[sort] = order;
+
+        // Find items based on filter and sort options
+        const items = await Item.find(filter).sort(sortOptions);
+
         res.status(200).json(items);
+
     } catch (error) {
         res.status(500).json({ message: 'Get items Error', error: error.message });
     }
@@ -67,5 +96,15 @@ export const updateItem = async (req, res) => {
         res.status(200).json({ message: 'Item updated successfully', item: updatedItem });
     } catch (error) {
         res.status(500).json({ message: 'Update item Error', error: error.message });
+    }
+}
+
+// --- Get all unique categories ---
+export const getCategories = async (req, res) => {
+    try {
+        const categories = await Item.distinct('category');
+        res.status(200).json(categories);
+    } catch (error) {
+        res.status(500).json({ message: 'Get categories Error', error: error.message });
     }
 }

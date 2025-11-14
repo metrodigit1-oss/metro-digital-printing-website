@@ -14,6 +14,7 @@ import Calender from './assets/Calender.png'
 import Brochures from './assets/Brochures.png'
 import Admin from "./pages/Admin.jsx"
 import UpdateItem from "./pages/UpdateItem.jsx"
+import Search from "./pages/Search.jsx"
 
 
 
@@ -36,6 +37,7 @@ export default function App() {
   <Routes>
     <Route path="/" element={<Home categories={categoriesData}/>} />
     <Route path="/about" element={<About />} />
+    <Route path="/search" element={<Search />} />
     <Route path="/admin/24863971" element={<Admin />} />
     <Route path="/admin/24863971/create-item" element={<CreateItem />} />
     <Route path="/admin/24863971/update-item/:id" element={<UpdateItem />} />
