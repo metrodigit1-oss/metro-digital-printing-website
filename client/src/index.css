@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+/* Animations for Swiper */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* Base state: invisible and slightly below its final position */
+.slide-up-initial {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+/* Final state: visible and in its final position */
+.slide-up-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Animation classes */
+.slide-down {
+  animation: slideDown 0.6s ease-out forwards;
+}
+
+.text-content {
+  animation: fadeIn 1.5s ease-out forwards;
+}
+
+
+
+
+/* Pagination styling */
+.swiper-pagination {
+  left: 20px !important;
+  right: auto !important;
+  width: auto !important;
+}
+
+.swiper-pagination-bullet {
+  background-color: white !important;
+  opacity: 0.6;
+}
+
+.swiper-pagination-bullet-active {
+  background-color: white !important;
+  opacity: 1;
+}
+
+/* Dropdown item fade animations */
+@keyframes fadeInDropdown {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.group-hover\:opacity-100 li {
+  animation: fadeInDropdown 0.3s ease-out forwards;
+}
+
+.group-hover\:opacity-100 li:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.group-hover\:opacity-100 li:nth-child(2) {
+  animation-delay: 0.05s;
+}
+
+.group-hover\:opacity-100 li:nth-child(3) {
+  animation-delay: 0.1s;
+}
+
+.group-hover\:opacity-100 li:nth-child(4) {
+  animation-delay: 0.15s;
+}
