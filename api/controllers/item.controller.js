@@ -36,19 +36,20 @@ export const getItems = async (req, res) => {
 
         // --- 2. ADD NEW FIELDS TO THE FILTER OBJECT ---
         if (category && category !== 'all') {
-            filter.category = category;
+            // Find documents where the category field CONTAINS the category string
+            filter.category = { $regex: category, $options: 'i' };
         }
         if (thickness && thickness !== 'all') {
-            filter.thickness = thickness;
+            filter.thickness = { $regex: thickness, $options: 'i' };
         }
         if (side && side !== 'all') {
-            filter.side = side;
+            filter.side = { $regex: side, $options: 'i' };
         }
         if (lamination && lamination !== 'all') {
-            filter.lamination = lamination;
+            filter.lamination = { $regex: lamination, $options: 'i' };
         }
         if (size && size !== 'all') {
-            filter.size = size;
+            filter.size = { $regex: size, $options: 'i' };
         }
         
         const sortOptions = {};
@@ -114,40 +115,63 @@ export const updateItem = async (req, res) => {
     }
 }
 
-// --- Get all unique categories ---
+// --- HELPER FUNCTION FOR SPLITTING AND GETTING UNIQUE VALUES ---
+/**
+ * Fetches distinct values for a field, splits comma-separated strings,
+ * and returns an array of unique, trimmed values.
+ * @param {string} fieldName - The name of the model field.
+ */
+const getDistinctSplitValues = async (fieldName) => {
+    // 1. Get all distinct values for the field (e.g., ['A', 'B', 'A,C'])
+    const distinctValues = await Item.distinct(fieldName);
+
+    // 2. Use flatMap to split comma-separated strings and flatten the array
+    const allValues = distinctValues.flatMap(value =>
+        typeof value === 'string'
+            ? value.split(',').map(s => s.trim()).filter(Boolean) // Split, trim, and remove empty strings
+            : [] // Ignore non-string values
+    );
+
+    // 3. Use a Set to get unique values, then convert back to an array
+    const uniqueValues = [...new Set(allValues)];
+    
+    return uniqueValues;
+};
+
+// --- Get all unique categories (MODIFIED) ---
 export const getCategories = async (req, res) => {
     try {
-        const categories = await Item.distinct('category');
+        const categories = await getDistinctSplitValues('category');
         res.status(200).json(categories);
     } catch (error) {
         res.status(500).json({ message: 'Get categories Error', error: error.message });
     }
 }
 
-// --- Get all unique thicknesses ---
+// --- Get all unique thicknesses (MODIFIED) ---
 export const getThicknesses = async (req, res) => {
     try {
-        const thicknesses = await Item.distinct('thickness');
+        const thicknesses = await getDistinctSplitValues('thickness');
         res.status(200).json(thicknesses);
     } catch (error) {
         res.status(500).json({ message: 'Get thicknesses Error', error: error.message });
     }
 }
 
-// --- Get all unique sides ---
+// --- Get all unique sides (MODIFIED) ---
 export const getSides = async (req, res) => {
     try {
-        const sides = await Item.distinct('side');
+        const sides = await getDistinctSplitValues('side');
         res.status(200).json(sides);
     } catch (error) {
         res.status(500).json({ message: 'Get sides Error', error: error.message });
     }
 }
 
-// --- Get all unique laminations ---
+// --- Get all unique laminations (MODIFIED) ---
 export const getLaminations = async (req, res) => {
     try {
-        const laminations = await Item.distinct('lamination');
+        const laminations = await getDistinctSplitValues('lamination');
         res.status(200).json(laminations);
     }
     catch (error) {
@@ -155,12 +179,13 @@ export const getLaminations = async (req, res) => {
     }
 }
 
-// --- Get all unique sizes ---
+// --- Get all unique sizes (MODIFIED) ---
 export const getSizes = async (req, res) => {
     try {
-        const sizes = await Item.distinct('size');
+        const sizes = await getDistinctSplitValues('size');
         res.status(200).json(sizes);
-    } catch (error) {
+    }
+    catch (error) {
         res.status(500).json({ message: 'Get sizes Error', error: error.message });
     }
 }

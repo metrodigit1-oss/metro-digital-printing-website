@@ -1,22 +1,17 @@
-import React from "react";
+
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Autoplay, EffectCards } from "swiper/modules";
+import {  Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import Banners from "../assets/Banners.png";
 import PhotoFrames from "../assets/Photo Frame.png";
 import BookCovers from "../assets/Book Cover.png";
 import Stickers from "../assets/Stickers.png";
 import VisitingCards from "../assets/Visiting Card.png";
-import Posters from "../assets/Posters.png";
-import Calender from "../assets/Calender.jpg";
-import Brochures from "../assets/Brochures.png";
 
-// 🚀 IMPORTS for React Icons (Ionicons V5)
 import {
   IoPrint,
   IoTimeOutline,
@@ -77,17 +72,7 @@ export default function Home() {
     },
   ];
 
-  const categories = [
-    { id: 1, name: "Photo Frame", image: PhotoFrames },
-    { id: 2, name: "Visiting Card", image: VisitingCards },
-    { id: 3, name: "Posters", image: Posters },
-    { id: 4, name: "Banners", image: Banners },
-    { id: 5, name: "Calender", image: Calender },
-    { id: 6, name: "Book Cover", image: BookCovers },
-    { id: 7, name: "Stickers", image: Stickers },
-    { id: 8, name: "Brochures", image: Brochures },
-  ];
-
+  
   const [featuredItems, setFeaturedItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);

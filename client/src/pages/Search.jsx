@@ -1,6 +1,6 @@
 // client/src/pages/Search.jsx
-
-import { useState, useEffect, use } from "react";
+//
+import { useState, useEffect } from "react"; // Removed 'use' import
 import { useNavigate, useLocation } from "react-router-dom";
 import ItemCard from "../components/ItemCard.jsx";
 
@@ -12,6 +12,7 @@ export default function Search() {
   const [items, setItems] = useState([]);
   const [error, setError] = useState(null);
 
+  // --- 1. States for all filters ---
   const [categories, setCategories] = useState([]);
   const [categoryError, setCategoryError] = useState(null);
   const [lamination, setLamination] = useState([]);
@@ -34,98 +35,39 @@ export default function Search() {
     size: "all",
   });
 
-  // --- 2. ADD A NEW useEffect TO FETCH CATEGORIES ON MOUNT ---
+  // --- 2. MODIFIED useEffect to fetch ALL filter data on mount ---
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        setCategoryError(null);
-        const res = await fetch("/api/item/categories");
-        const data = await res.json();
-        if (data.message) {
-          setCategoryError(data.message);
-        } else {
-          setCategories(data);
+    const fetchFilterData = async () => {
+      // Helper function for fetching
+      const fetchData = async (url, setData, setError) => {
+        try {
+          setError(null);
+          const res = await fetch(url);
+          const data = await res.json();
+          if (data.message) {
+            setError(data.message);
+          } else {
+            setData(data);
+          }
+        } catch (err) {
+          setError(err.message);
         }
-      } catch (err) {
-        setCategoryError(err.message);
-      }
-    };
-    fetchCategories();
-  }, []); // Empty dependency array means this runs once on mount
+      };
 
-  useEffect(() => {
-    const fetchLaminations = async () => {
-      try {
-        setLaminationError(null);
-        const res = await fetch("/api/item/laminations");
-        const data = await res.json();
-        if (data.message) {
-          setLaminationError(data.message);
-        } else {
-          setLamination(data);
-        }
-      } catch (err) {
-        setLaminationError(err.message);
-      }
+      // Fetch all filter options in parallel
+      Promise.all([
+        fetchData('/api/item/categories', setCategories, setCategoryError),
+        fetchData('/api/item/thicknesses', setThickness, setThicknessError),
+        fetchData('/api/item/sides', setSide, setSideError),
+        fetchData('/api/item/laminations', setLamination, setLaminationError),
+        fetchData('/api/item/sizes', setSize, setSizeError),
+      ]);
     };
-    fetchLaminations();
-  }, []); // Empty dependency array means this runs once on mount
 
-  useEffect(() => {
-    const fetchThicknesses = async () => {
-      try {
-        setThicknessError(null);
-        const res = await fetch("/api/item/thicknesses");
-        const data = await res.json();
-        if (data.message) {
-          setThicknessError(data.message);
-        } else {
-          setThickness(data);
-        }
-      } catch (err) {
-        setThicknessError(err.message);
-      }
-    };
-    fetchThicknesses();
-  }, []); // Empty dependency array means this runs once on mount
+    fetchFilterData();
+  }, []); // Empty array ensures this runs only once
 
-  useEffect(() => {
-    const fetchSides = async () => {
-      try {
-        setSideError(null);
-        const res = await fetch("/api/item/sides");
-        const data = await res.json();
-        if (data.message) {
-          setSideError(data.message);
-        } else {
-          setSide(data);
-        }
-      } catch (err) {
-        setSideError(err.message);
-      }
-    };
-    fetchSides();
-  }, []); // Empty dependency array means this runs once on mount
-
-  useEffect(() => {
-    const fetchSizes = async () => {
-      try {
-        setSizeError(null);
-        const res = await fetch("/api/item/sizes");
-        const data = await res.json();
-        if (data.message) {
-          setSizeError(data.message);
-        } else {
-          setSize(data);
-        }
-      } catch (err) {
-        setSizeError(err.message);
-      }
-    };
-    fetchSizes();
-  }, []); // Empty dependency array means this runs once on mount
-
-  // This effect fetches items when the search query (URL) changes
+  // --- 3. useEffect for fetching items based on URL search ---
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const searchTermFromUrl = urlParams.get("searchTerm");
@@ -182,6 +124,7 @@ export default function Search() {
     fetchItems();
   }, [location.search]);
 
+ 
   const handleChange = (e) => {
     const { id, value } = e.target;
     setSidebarData({ ...sidebarData, [id]: value });
@@ -203,11 +146,14 @@ export default function Search() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row mb-10">
-      <div className="w-full md:w-80 p-6 bg-slate-50 md:min-h-screen border-b-2 md:border-r-2  mb-10">
+    <div className="flex flex-col md:flex-row">
+      <div className="w-full md:w-92 p-6 bg-slate-50 md:min-h-screen border-b-2 md:border-r-2">
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
-            <label htmlFor="searchTerm" className="font-semibold text-gray-700">
+            <label
+              htmlFor="searchTerm"
+              className="font-semibold text-gray-700"
+            >
               Search Term:
             </label>
             <input
@@ -220,7 +166,7 @@ export default function Search() {
             />
           </div>
 
-          {/* --- 3. MODIFY THE CATEGORY SELECT --- */}
+          {/* Category Dropdown (Dynamic) */}
           <div className="flex flex-col gap-2">
             <label htmlFor="category" className="font-semibold text-gray-700">
               Category:
@@ -230,13 +176,13 @@ export default function Search() {
               className="border rounded-lg p-3 w-full bg-white focus:outline-none focus:ring-2 focus:ring-red-400 transition-all duration-300"
               onChange={handleChange}
               value={sidebarData.category}
-              disabled={categories.length === 0 && !categoryError} // Disable while loading
+              disabled={categories.length === 0 && !categoryError}
             >
               <option value="all">All</option>
               {categoryError ? (
-                <option value="all" disabled>
-                  Could not load categories
-                </option>
+                <option value="" disabled>Could not load categories</option>
+              ) : categories.length === 0 && !categoryError ? (
+                 <option value="" disabled>Loading...</option>
               ) : (
                 categories.map((category) => (
                   <option key={category} value={category}>
@@ -246,34 +192,9 @@ export default function Search() {
               )}
             </select>
           </div>
-
+          <div className=" grid grid-cols-2 gap-3 ">
+          {/* Thickness Dropdown (Dynamic) */}
           <div className="flex flex-col gap-2">
-            <label htmlFor="lamination" className="font-semibold text-gray-700">
-              Lamination:
-            </label>
-            <select
-              id="lamination"
-              className="border rounded-lg p-3 w-full bg-white focus:outline-none focus:ring-2 focus:ring-red-400 transition-all duration-300"
-              onChange={handleChange}
-              value={sidebarData.lamination}
-              disabled={lamination.length === 0 && !laminationError} // Disable while loading
-            >
-              <option value="all">All</option>
-              {laminationError ? (
-                <option value="all" disabled>
-                  Could not load laminations
-                </option>
-              ) : (
-                lamination.map((lamination) => (
-                  <option key={lamination} value={lamination}>
-                    {lamination}
-                  </option>
-                ))
-              )}
-            </select>
-          </div>
-
-          <div>
             <label htmlFor="thickness" className="font-semibold text-gray-700">
               Thickness:
             </label>
@@ -282,24 +203,25 @@ export default function Search() {
               className="border rounded-lg p-3 w-full bg-white focus:outline-none focus:ring-2 focus:ring-red-400 transition-all duration-300"
               onChange={handleChange}
               value={sidebarData.thickness}
-              disabled={thickness.length === 0 && !thicknessError} // Disable while loading
+              disabled={thickness.length === 0 && !thicknessError}
             >
               <option value="all">All</option>
               {thicknessError ? (
-                <option value="all" disabled>
-                  Could not load thicknesses
-                </option>
+                <option value="" disabled>Could not load options</option>
+              ) : thickness.length === 0 && !thicknessError ? (
+                 <option value="" disabled>Loading...</option>
               ) : (
-                thickness.map((thickness) => (
-                  <option key={thickness} value={thickness}>
-                    {thickness}
+                thickness.map((t) => (
+                  <option key={t} value={t}>
+                    {t}
                   </option>
                 ))
               )}
             </select>
           </div>
 
-          <div>
+          {/* Side Dropdown (Dynamic) */}
+          <div className="flex flex-col gap-2">
             <label htmlFor="side" className="font-semibold text-gray-700">
               Side:
             </label>
@@ -308,24 +230,55 @@ export default function Search() {
               className="border rounded-lg p-3 w-full bg-white focus:outline-none focus:ring-2 focus:ring-red-400 transition-all duration-300"
               onChange={handleChange}
               value={sidebarData.side}
-              disabled={side.length === 0 && !sideError} // Disable while loading
+              disabled={side.length === 0 && !sideError}
             >
               <option value="all">All</option>
               {sideError ? (
-                <option value="all" disabled>
-                  Could not load sides
-                </option>
+                <option value="" disabled>Could not load options</option>
+              ) : side.length === 0 && !sideError ? (
+                 <option value="" disabled>Loading...</option>
               ) : (
-                side.map((side) => (
-                  <option key={side} value={side}>
-                    {side}
+                side.map((s) => (
+                  <option key={s} value={s}>
+                    {s}
                   </option>
                 ))
               )}
             </select>
           </div>
 
-          <div>
+          {/* Lamination Dropdown (Dynamic) */}
+          <div className="flex flex-col gap-2">
+            <label
+              htmlFor="lamination"
+              className="font-semibold text-gray-700"
+            >
+              Lamination:
+            </label>
+            <select
+              id="lamination"
+              className="border rounded-lg p-3 w-full bg-white focus:outline-none focus:ring-2 focus:ring-red-400 transition-all duration-300"
+              onChange={handleChange}
+              value={sidebarData.lamination}
+              disabled={lamination.length === 0 && !laminationError}
+            >
+              <option value="all">All</option>
+              {laminationError ? (
+                <option value="" disabled>Could not load options</option>
+              ) : lamination.length === 0 && !laminationError ? (
+                 <option value="" disabled>Loading...</option>
+              ) : (
+                lamination.map((l) => (
+                  <option key={l} value={l}>
+                    {l}
+                  </option>
+                ))
+              )}
+            </select>
+          </div>
+
+          {/* Size Dropdown (Dynamic) */}
+          <div className="flex flex-col gap-2">
             <label htmlFor="size" className="font-semibold text-gray-700">
               Size:
             </label>
@@ -334,27 +287,27 @@ export default function Search() {
               className="border rounded-lg p-3 w-full bg-white focus:outline-none focus:ring-2 focus:ring-red-400 transition-all duration-300"
               onChange={handleChange}
               value={sidebarData.size}
-              disabled={size.length === 0 && !sizeError} // Disable while loading
+              disabled={size.length === 0 && !sizeError}
             >
               <option value="all">All</option>
               {sizeError ? (
-                <option value="all" disabled>
-                  Could not load sizes
-                </option>
+                <option value="" disabled>Could not load options</option>
+              ) : size.length === 0 && !sizeError ? (
+                 <option value="" disabled>Loading...</option>
               ) : (
-                size.map((size) => (
-                  <option key={size} value={size}>
-                    {size}
+                size.map((s) => (
+                  <option key={s} value={s}>
+                    {s}
                   </option>
                 ))
               )}
             </select>
           </div>
-
-          <div className="flex flex-col gap-2">
-            {/* ... (Sort dropdowns - no changes) ... */}
+          </div>
+          {/* Sort Dropdown (No Change) */}
+          <div className="flex flex-col gap-x-2 gap-y-1">
             <label className="font-semibold text-gray-700">Sort:</label>
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               <select
                 id="sort"
                 className="border rounded-lg p-3 w-full bg-white focus:outline-none focus:ring-2 focus:ring-red-400 transition-all duration-300"
@@ -363,6 +316,7 @@ export default function Search() {
               >
                 <option value="createdAt">Newest</option>
                 <option value="name">Name (A-Z)</option>
+                <option value="price">Price</option>
               </select>
               <select
                 id="order"
@@ -385,7 +339,6 @@ export default function Search() {
         </form>
       </div>
 
-      {/* --- RESULTS AREA (No changes) --- */}
       <div className="flex-1 p-8">
         <h1 className="text-3xl font-semibold text-gray-700 mb-6">
           Product Results
