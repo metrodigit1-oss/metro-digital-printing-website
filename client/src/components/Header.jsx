@@ -1,13 +1,16 @@
 // client/src/components/Header.jsx
 //
 import { FaSearch } from 'react-icons/fa';
-import { Link, useNavigate } from 'react-router-dom';
+// 1. Import useLocation
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import logo from '../assets/logo.png';
-import { useState, useEffect } from 'react'; // Import useState and useEffect
+import { useState, useEffect } from 'react';
 
 export default function Header() {
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
+  // 2. Get the current location object
+  const location = useLocation();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -19,12 +22,13 @@ export default function Header() {
 
   // This effect updates the search bar if the URL changes
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
+    // 3. Use location.search for consistency
+    const urlParams = new URLSearchParams(location.search);
     const searchTermFromUrl = urlParams.get('searchTerm');
     if (searchTermFromUrl) {
       setSearchTerm(searchTermFromUrl);
     }
-  }, [window.location.search]);
+  }, [location.search]); // Depend on location.search
 
 
   return (
@@ -35,9 +39,15 @@ export default function Header() {
         </Link>
         
         <ul className='flex gap-4'>
-          {/* ... your existing list items (All Products, Stationary, etc.) ... */}
-          {/* (No changes needed to the dropdowns) */}
-          <li className='relative group'>
+
+            {/* 4. Conditionally render the Home button */}
+            {location.pathname !== '/' && (
+              <Link to='/'>
+                <li className='text-gray-600 hover:text-red-600 hover:rounded-4xl p-2 transition-all duration-300'>Home</li>
+              </Link>
+            )}
+
+            <li className='relative group'>
               <button className='text-gray-600 group-hover:text-red-600 group-hover:rounded-4xl p-2 transition-all duration-300'>
                 All Products
               </button>
@@ -48,6 +58,8 @@ export default function Header() {
                 <li className='px-4 py-2 cursor-pointer transition-all duration-200 hover:text-red-600 hover:border-l-10 hover:border-red-600'>Banners</li>
               </ul>
             </li>
+
+            
             
             <li className='relative group'>
               <button className='text-gray-600 group-hover:text-red-600 group-hover:rounded-4xl p-2 transition-all duration-300'>
@@ -74,24 +86,25 @@ export default function Header() {
             </li>
 
             <Link to='/about'>
-              <li className='text-gray-600 hover:text-red-600 hover:rounded-4xl p-2 transition-all duration-300'>About</li>
+            <li className='text-gray-600 hover:text-red-600 hover:rounded-4xl p-2 transition-all duration-300'>About</li>
             </Link>
-        </ul>
 
-        {/* --- MODIFIED FORM --- */}
+            
+
+        </ul>
         <form onSubmit={handleSubmit} className='bg-slate-200 p-3 rounded-3xl flex items-center w-24 sm:w-64'>
-          <input
-            type="text"
-            placeholder="Search..."
-            className='bg-transparent focus:outline-none w-full'
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <button type="submit">
-            <FaSearch className='text-slate-600' />
-          </button>
+            <input 
+              type="text" 
+              placeholder="Search..." 
+              className='bg-transparent focus:outline-none w-full'
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <button type="submit">
+              <FaSearch className='text-slate-600'/>
+            </button>
         </form>
-      </div>
+        </div>
     </header>
-  );
+  )
 }

@@ -1,19 +1,10 @@
-// client/src/components/ItemCard.jsx
+
 
 import { Link } from 'react-router-dom';
 
-/**
- * A reusable card component to display a single item.
- * Includes the hover-to-scale animation and theme-consistent styling.
- */
+
 export default function ItemCard({ item }) {
-  // Helper to format the price, you can adjust as needed
-  const formatPrice = (price) => {
-    if (typeof price !== 'number') {
-      return 'Price not set';
-    }
-    return `$${price.toLocaleString()}`;
-  };
+  
 
   return (
     <Link 
@@ -33,10 +24,8 @@ export default function ItemCard({ item }) {
           {item.name}
         </h3>
         <p className='text-sm text-gray-600 mt-1'>{item.category}</p>
-        <p className='text-lg font-bold text-gray-800 mt-2'>
-          {formatPrice(item.price)}
-        </p>
       </div>
+      <div className="w-0 group-hover:w-full h-1 bg-red-600 mx-auto transition-all duration-300 mt-2"></div>
     </Link>
   );
 }

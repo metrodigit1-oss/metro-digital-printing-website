@@ -4,8 +4,8 @@ import { FaInstagram } from "react-icons/fa";
 import logo from '../assets/logo.png';
 
 const contactInfo = [
-  { icon: IoLocationOutline, text: ' Keezhillam - Kurichilacode Rd, Keezhillam, Kerala 683541' },
-  { icon: IoCallOutline, text: '7025361333' },
+  { icon: IoLocationOutline, text: ' Building No.: VIII/387/8, Keezhillam, Perumbavoor, Ernakulam, Kerala 683541' },
+  { icon: IoCallOutline, text: '7025361333, 9446576362' },
   { icon: IoMailOutline, text: 'metrodigital362@gmail.com' }
 ];
 
@@ -64,7 +64,6 @@ export default function Footer({ productCategories = [] }) {
           <ul className="space-y-2">
             <li><a href="#" className="hover:text-red-500 transition-colors duration-200">Home</a></li>
             <li><a href="#" className="hover:text-red-500 transition-colors duration-200">About Us</a></li>
-            <li><a href="#" className="hover:text-red-500 transition-colors duration-200">FAQs</a></li>
             <li><a href="#" className="hover:text-red-500 transition-colors duration-200">Contact</a></li>
           </ul>
         </div>

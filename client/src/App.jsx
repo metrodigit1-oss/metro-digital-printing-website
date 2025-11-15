@@ -10,14 +10,14 @@ import BookCovers from './assets/Book Cover.png'
 import Stickers from './assets/Stickers.png'
 import VisitingCards from './assets/Visiting Card.png'
 import Posters from './assets/Posters.png'
-import Calender from './assets/Calender.png'
+import Calender from './assets/Calender.jpg'
 import Brochures from './assets/Brochures.png'
 import Admin from "./pages/Admin.jsx"
 import UpdateItem from "./pages/UpdateItem.jsx"
 import Search from "./pages/Search.jsx"
 import Item from "./pages/Item.jsx"
 
-
+const ADMIN_PATH = import.meta.env.VITE_ADMIN;
 
 
 export default function App() {
@@ -40,9 +40,9 @@ export default function App() {
     <Route path="/about" element={<About />} />
     <Route path="/search" element={<Search />} />
     <Route path="/item/:id" element={<Item />} />
-    <Route path="/admin/24863971" element={<Admin />} />
-    <Route path="/admin/24863971/create-item" element={<CreateItem />} />
-    <Route path="/admin/24863971/update-item/:id" element={<UpdateItem />} />
+    <Route path={`/admin/${ADMIN_PATH}`} element={<Admin />} />
+    <Route path={`/admin/${ADMIN_PATH}/create-item`} element={<CreateItem />} />
+    <Route path={`/admin/${ADMIN_PATH}/update-item/:id`} element={<UpdateItem />} />
   </Routes>
   <Footer productCategories={categoriesData} />
   </BrowserRouter>

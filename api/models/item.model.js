@@ -6,6 +6,12 @@ const itemSchema = new mongoose.Schema({
 
   category: { type: String, required: true },
 
+  thickness: { type: String, required: true },
+  
+  side: { type: String, required: true },
+
+  lamination: { type: String, required: true },
+
   size: { type: String, required: true },
 
   price: { type: Number, required: true },

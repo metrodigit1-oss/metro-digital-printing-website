@@ -13,16 +13,20 @@ export const createItem = async (req, res) => {
 // --- Get all items ---
 export const getItems = async (req, res) => {
     try {
+        // --- 1. GET NEW QUERY PARAMETERS ---
         const searchTerm = req.query.searchTerm || '';
         const category = req.query.category;
+        const thickness = req.query.thickness; // new
+        const side = req.query.side;           // new
+        const lamination = req.query.lamination; // new
+        const size = req.query.size;           // new
+        
         const sort = req.query.sort || 'createdAt';
         const order = req.query.order === 'asc' ? 1 : -1;
+        const limit = parseInt(req.query.limit) || 0; // Keep limit for home page
 
         let filter = {};
 
-        // Add search term to filter
-        // This searches the 'name' and 'description' fields.
-        // '$options: "i"' makes the search case-insensitive.
         if (searchTerm) {
             filter.$or = [
                 { name: { $regex: searchTerm, $options: 'i' } },
@@ -30,17 +34,28 @@ export const getItems = async (req, res) => {
             ];
         }
 
-        // Add category to filter
+        // --- 2. ADD NEW FIELDS TO THE FILTER OBJECT ---
         if (category && category !== 'all') {
             filter.category = category;
         }
-
-        // Add sorting
+        if (thickness && thickness !== 'all') {
+            filter.thickness = thickness;
+        }
+        if (side && side !== 'all') {
+            filter.side = side;
+        }
+        if (lamination && lamination !== 'all') {
+            filter.lamination = lamination;
+        }
+        if (size && size !== 'all') {
+            filter.size = size;
+        }
+        
         const sortOptions = {};
         sortOptions[sort] = order;
 
-        // Find items based on filter and sort options
-        const items = await Item.find(filter).sort(sortOptions);
+        // Find items based on filter, sort, and limit
+        const items = await Item.find(filter).sort(sortOptions).limit(limit);
 
         res.status(200).json(items);
 
@@ -106,5 +121,46 @@ export const getCategories = async (req, res) => {
         res.status(200).json(categories);
     } catch (error) {
         res.status(500).json({ message: 'Get categories Error', error: error.message });
+    }
+}
+
+// --- Get all unique thicknesses ---
+export const getThicknesses = async (req, res) => {
+    try {
+        const thicknesses = await Item.distinct('thickness');
+        res.status(200).json(thicknesses);
+    } catch (error) {
+        res.status(500).json({ message: 'Get thicknesses Error', error: error.message });
+    }
+}
+
+// --- Get all unique sides ---
+export const getSides = async (req, res) => {
+    try {
+        const sides = await Item.distinct('side');
+        res.status(200).json(sides);
+    } catch (error) {
+        res.status(500).json({ message: 'Get sides Error', error: error.message });
+    }
+}
+
+// --- Get all unique laminations ---
+export const getLaminations = async (req, res) => {
+    try {
+        const laminations = await Item.distinct('lamination');
+        res.status(200).json(laminations);
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Get laminations Error', error: error.message });
+    }
+}
+
+// --- Get all unique sizes ---
+export const getSizes = async (req, res) => {
+    try {
+        const sizes = await Item.distinct('size');
+        res.status(200).json(sizes);
+    } catch (error) {
+        res.status(500).json({ message: 'Get sizes Error', error: error.message });
     }
 }

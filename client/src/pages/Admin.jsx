@@ -10,6 +10,8 @@ export default function Admin() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
+  const ADMIN_PATH = import.meta.env.VITE_ADMIN;
+
   // Fetch all items when the component mounts
   useEffect(() => {
     const fetchItems = async () => {
@@ -129,7 +131,7 @@ export default function Admin() {
           Admin Dashboard
         </h1>
         <Link
-          to="/create-item"
+          to={`/admin/${ADMIN_PATH}/create-item`}
           className="p-3 bg-indigo-600 text-white rounded-lg uppercase font-semibold shadow-md hover:bg-indigo-700 transition-all duration-300"
         >
           Create New Item
@@ -222,7 +224,7 @@ export default function Admin() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <Link
-                        to={`/admin/24863971/update-item/${item._id}`}
+                        to={`/admin/${ADMIN_PATH}/update-item/${item._id}`}
                         className="text-indigo-600 hover:text-indigo-900 inline-block mr-4"
                         title="Update"
                       >

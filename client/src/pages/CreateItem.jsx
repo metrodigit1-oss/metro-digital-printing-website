@@ -5,6 +5,9 @@ export default function CreateItem() {
   const [formData, setFormData] = useState({
     name: '',
     category: '',
+    lamination: '',
+    side: '',
+    thickness: '',
     size: '',
     price: 0,
     description: '',
@@ -66,6 +69,9 @@ export default function CreateItem() {
       setFormData({ // Clear the form
         name: '',
         category: '',
+        lamination: '',
+        side: '',
+        thickness: '',
         size: '',
         price: 0,
         description: '',
@@ -120,6 +126,57 @@ export default function CreateItem() {
               required
               onChange={handleChange}
               value={formData.category}
+            />
+          </div>
+
+          {/* Lamination */}
+          <div>
+            <label htmlFor="lamination" className="block text-sm font-medium text-gray-700 mb-1">
+              Lamination Type
+            </label>
+            <input
+              type="text"
+              placeholder="e.g., Matte, Glossy"
+              className="w-full border border-gray-300 p-3 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition duration-300 ease-in-out"
+              id="lamination"
+              maxLength="64"
+              required
+              onChange={handleChange}
+              value={formData.lamination}
+            />
+          </div>
+
+          {/* Side */}
+          <div>
+            <label htmlFor="side" className="block text-sm font-medium text-gray-700 mb-1">
+              Print Side
+            </label>
+            <input
+              type="text"
+              placeholder="e.g., Single-sided, Double-sided"
+              className="w-full border border-gray-300 p-3 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition duration-300 ease-in-out"
+              id="side"
+              maxLength="64"
+              required
+              onChange={handleChange}
+              value={formData.side}
+            />
+          </div>
+
+          {/* Thickness */}
+          <div>
+            <label htmlFor="thickness" className="block text-sm font-medium text-gray-700 mb-1">
+              Material Thickness
+            </label>
+            <input
+              type="text"
+              placeholder="e.g., 200 GSM"
+              className="w-full border border-gray-300 p-3 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none transition duration-300 ease-in-out"
+              id="thickness"
+              maxLength="64"
+              required
+              onChange={handleChange}
+              value={formData.thickness}
             />
           </div>
 
